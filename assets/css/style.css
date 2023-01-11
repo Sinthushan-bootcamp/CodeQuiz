@@ -1,0 +1,39 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+nav{
+    margin:0 2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+a{
+    color: darkviolet;
+    text-decoration: none;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: center;
+    margin: 3rem 20rem;
+}
+
+main h1 {
+    padding: 2rem;
+}
+section{
+    padding: 2rem;
+}
+
+button{
+    background-color:darkviolet;
+    border: none;
+    color: white;
+    padding: 1rem;
+    cursor:pointer;
+}
