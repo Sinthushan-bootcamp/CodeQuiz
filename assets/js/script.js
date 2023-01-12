@@ -88,6 +88,14 @@ function displayResults(){
 
 }
 
+function clearButtons() {
+    choiceButtons = document.querySelectorAll('.btn-option');
+    for (var i=0; i<choiceButtons.length; i++) {
+        options.removeChild(choiceButtons[i]);
+    }
+}
+
+
 function evaluateAnswer(element){
     question =  questions[questionCount]
     if (element.textContent == question.correctAnswer){
@@ -97,10 +105,7 @@ function evaluateAnswer(element){
         score = score - 10
     }
     questionCount++
-    choiceButtons = document.querySelectorAll('.btn-option');
-    for (var i=0; i<choiceButtons.length; i++) {
-        options.removeChild(choiceButtons[i]);
-    }
+    clearButtons()
     if (questionCount === 5){
         displayResults()
     } else {
@@ -113,7 +118,7 @@ function timer () {
     timeLeft--;
     timerSpan.textContent ="Time: " + timeLeft;
     if(timeLeft === 0) {
-      timerEl.textContent = " ";
+      clearButtons()
       displayResults();
     }
 }
