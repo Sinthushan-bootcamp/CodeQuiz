@@ -45,6 +45,11 @@ options = document.querySelector('#buttonSection');
 // initialize variables
 var questionCount;
 
+function addToHighscore(){
+    input = document.querySelector('#initials')
+    console.log(input.value);
+}
+
 function displayQuestion() {
    question =  questions[questionCount]
    title.textContent = question.title
@@ -56,7 +61,26 @@ function displayQuestion() {
         buttonEl.setAttribute('class', 'btn-option ' + i);
         buttonEl.setAttribute('onclick','evaluateAnswer(this);')
         options.appendChild(buttonEl)
+        
    }
+}
+
+function displayResults(){
+    title.textContent = "All Done!"
+    questionSection.textContent = 'your score was'
+    inputEl = document.createElement("input");
+    labelEl = document.createElement("label");
+    submitEl = document.createElement("button");
+    inputEl.setAttribute('name', 'initials');
+    inputEl.setAttribute('id', 'initials');
+    labelEl.setAttribute('for', 'initials');
+    labelEl.textContent = 'Please enter your initials:';
+    submitEl.setAttribute('onclick', 'addToHighscore()')
+    submitEl.textContent = 'Submit'
+    options.appendChild(labelEl);
+    options.appendChild(inputEl);
+    options.appendChild(submitEl);
+
 }
 
 function evaluateAnswer(element){
@@ -71,8 +95,12 @@ function evaluateAnswer(element){
     for (var i=0; i<choiceButtons.length; i++) {
         options.removeChild(choiceButtons[i]);
     }
+    if (questionCount === 5){
+        displayResults()
+    } else {
+        displayQuestion()
+    }
     
-    displayQuestion()
 }
 
 
