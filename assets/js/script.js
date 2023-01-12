@@ -48,9 +48,12 @@ var questionCount;
 var timeLeft;
 var timeInterval;
 var score = 0;
+var scores = []
+
 function addToHighscore(){
     input = document.querySelector('#initials')
-    console.log(input.value);
+    scores.push({name: input.value, score: score});
+    localStorage.setItem('highscore', JSON.stringify(scores));
 }
 
 function displayQuestion() {
@@ -128,5 +131,9 @@ startButton.addEventListener("click", function() {
     options.removeChild(startButton);
     timeLeft = 75;
     timeInterval = setInterval(timer, 1000)
+    var storedScores = JSON.parse(localStorage.getItem("highscore"));
+    if (storedScores !== null) {
+        scores = storedScores;
+    }
     displayQuestion();
 });
