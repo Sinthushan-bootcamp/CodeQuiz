@@ -42,9 +42,12 @@ startButton = document.querySelector('#startQuiz');
 title = document.querySelector('#mainHeader');
 questionSection = document.querySelector('#info');
 options = document.querySelector('#buttonSection');
+timerSpan = document.querySelector('#timer');
 // initialize variables
 var questionCount;
-
+var timeLeft;
+var timeInterval;
+var score = 0;
 function addToHighscore(){
     input = document.querySelector('#initials')
     console.log(input.value);
@@ -66,8 +69,10 @@ function displayQuestion() {
 }
 
 function displayResults(){
+    score = score + timeLeft
+    clearInterval(timeInterval)
     title.textContent = "All Done!"
-    questionSection.textContent = 'your score was'
+    questionSection.textContent = 'your score was ' + score
     inputEl = document.createElement("input");
     labelEl = document.createElement("label");
     submitEl = document.createElement("button");
@@ -83,18 +88,24 @@ function displayResults(){
 
 }
 
+function clearButtons() {
+    choiceButtons = document.querySelectorAll('.btn-option');
+    for (var i=0; i<choiceButtons.length; i++) {
+        options.removeChild(choiceButtons[i]);
+    }
+}
+
+
 function evaluateAnswer(element){
     question =  questions[questionCount]
     if (element.textContent == question.correctAnswer){
         console.log('Correct Answer')
     } else {
         console.log('Incorrect Answer')
+        score = score - 10
     }
     questionCount++
-    choiceButtons = document.querySelectorAll('.btn-option');
-    for (var i=0; i<choiceButtons.length; i++) {
-        options.removeChild(choiceButtons[i]);
-    }
+    clearButtons()
     if (questionCount === 5){
         displayResults()
     } else {
@@ -103,10 +114,19 @@ function evaluateAnswer(element){
     
 }
 
-
+function timer () {
+    timeLeft--;
+    timerSpan.textContent ="Time: " + timeLeft;
+    if(timeLeft === 0) {
+      clearButtons()
+      displayResults();
+    }
+}
 
 startButton.addEventListener("click", function() {
     questionCount = 0
     options.removeChild(startButton);
+    timeLeft = 75;
+    timeInterval = setInterval(timer, 1000)
     displayQuestion();
 });
