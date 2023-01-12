@@ -42,9 +42,12 @@ startButton = document.querySelector('#startQuiz');
 title = document.querySelector('#mainHeader');
 questionSection = document.querySelector('#info');
 options = document.querySelector('#buttonSection');
+timerSpan = document.querySelector('#timer');
 // initialize variables
 var questionCount;
-
+var timeLeft;
+var timeInterval;
+var score = 0;
 function addToHighscore(){
     input = document.querySelector('#initials')
     console.log(input.value);
@@ -66,8 +69,10 @@ function displayQuestion() {
 }
 
 function displayResults(){
+    score = score + timeLeft
+    clearInterval(timeInterval)
     title.textContent = "All Done!"
-    questionSection.textContent = 'your score was'
+    questionSection.textContent = 'your score was ' + score
     inputEl = document.createElement("input");
     labelEl = document.createElement("label");
     submitEl = document.createElement("button");
@@ -89,6 +94,7 @@ function evaluateAnswer(element){
         console.log('Correct Answer')
     } else {
         console.log('Incorrect Answer')
+        score = score - 10
     }
     questionCount++
     choiceButtons = document.querySelectorAll('.btn-option');
@@ -103,10 +109,19 @@ function evaluateAnswer(element){
     
 }
 
-
+function timer () {
+    timeLeft--;
+    timerSpan.textContent ="Time: " + timeLeft;
+    if(timeLeft === 0) {
+      timerEl.textContent = " ";
+      displayResults();
+    }
+}
 
 startButton.addEventListener("click", function() {
     questionCount = 0
     options.removeChild(startButton);
+    timeLeft = 75;
+    timeInterval = setInterval(timer, 1000)
     displayQuestion();
 });
