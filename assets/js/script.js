@@ -52,7 +52,7 @@ var timeInterval;
 var score = 0;
 var scores = []
 
-
+// these functions work as the view functions, they add and remove elements necessary for their specific page
 function displayQuestion() {
    question =  questions[questionCount]
    title.textContent = question.title
@@ -114,15 +114,17 @@ function displayHighscores(){
     options.appendChild(clearHighScoresButton);
 }
 
+
+// utility functions
 function startQuestions(){
     questionCount = 0
-    options.removeChild(startButton);
-    timeLeft = 75;
-    timeInterval = setInterval(timer, 1000)
     var storedScores = JSON.parse(localStorage.getItem("highscore"));
     if (storedScores !== null) {
         scores = storedScores;
     }
+    options.removeChild(startButton);
+    timeLeft = 75;
+    timeInterval = setInterval(timer, 1000)
     displayQuestion();
 }
 
@@ -175,4 +177,5 @@ function clearHighScores(){
     localStorage.removeItem('highscore');
 }
 
+// Event listeners
 startButton.addEventListener("click", startQuestions);
