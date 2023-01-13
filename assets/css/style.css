@@ -1,26 +1,49 @@
+:root {
+    /* creating variables for colors to be used throughout the page */
+    --primary-color: #B68CB8;
+    --secondary-color: #EFBDEB;
+    --text-color: white;
+}
 *{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 nav{
+    /* nav consist of 'view highscores' link and timer, we want to space them on either side of the page 
+    this is achieved using flex and space-between option for justify content */
     margin:0 2rem;
     display: flex;
     justify-content: space-between;
 }
 
 a{
-    color: darkviolet;
+    color: var(--text-color);
     text-decoration: none;
+    cursor:pointer; /* added for better usability, changing to pointer makes link obvious */
+}
+
+#timer {
+    color: var(--text-color);
+}
+
+body{
+    background-color: #6461A0;
 }
 
 main {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    align-items: center;
     text-align: center;
     margin: 3rem 20rem;
+    background-color:whitesmoke;
+    filter: drop-shadow(1rem 0.5rem 1rem darkgray); /* creating a drop shadow to differentiate background with main section */
+    /* setting min height using view height so that when we go from start page to questions to highscores 
+    the main section keeps a consistent szr */
+    min-height: 70vh; 
+    border:1px solid lightgrey;
+
 }
 
 main h1 {
@@ -31,9 +54,44 @@ section{
 }
 
 button{
-    background-color:darkviolet;
+    background-color: var(--primary-color);
     border: none;
-    color: white;
+    color: var(--text-color);
     padding: 1rem;
     cursor:pointer;
+    border-radius: 1rem;
+    width: 20rem;
+    margin: 0.5rem;
+}
+
+#buttonSection{
+    display: flex;
+    flex-direction: column;
+    width:auto;
+    align-items: center;
+}
+
+ol {
+    align-self: stretch;
+    margin: 0rem 1rem;
+    padding: 1rem;
+    background-color: var(--primary-color);
+    width: auto;
+
+}
+
+li {
+    background-color:var(--secondary-color);
+    margin: 0.5rem;
+}
+
+@media screen and (max-width: 970px) {
+    main {
+        margin: 3rem 0; /* The extreme left and right margin of the main section do not work well in smaller views*/
+    }
+    button{ /* making button smaller so they can fit in the parent section */
+        padding: 0rem;
+        width: 10rem;
+        margin: 1rem 0rem;
+    }
 }
