@@ -43,6 +43,8 @@ title = document.querySelector('#mainHeader');
 questionSection = document.querySelector('#info');
 options = document.querySelector('#buttonSection');
 timerSpan = document.querySelector('#timer');
+mainSection = document.querySelector('main');
+headSection = document.querySelector('header');
 // initialize variables
 var questionCount;
 var timeLeft;
@@ -50,11 +52,6 @@ var timeInterval;
 var score = 0;
 var scores = []
 
-function addToHighscore(){
-    input = document.querySelector('#initials')
-    scores.push({name: input.value, score: score});
-    localStorage.setItem('highscore', JSON.stringify(scores));
-}
 
 function displayQuestion() {
    question =  questions[questionCount]
@@ -91,11 +88,50 @@ function displayResults(){
 
 }
 
-function clearButtons() {
-    choiceButtons = document.querySelectorAll('.btn-option');
-    for (var i=0; i<choiceButtons.length; i++) {
-        options.removeChild(choiceButtons[i]);
+function displayHighscores(){
+    clearChildren(options);
+    headSection.removeChild(questionSection);
+    title.textContent = "Highscores"
+    listEl = document.createElement("ol");
+    listEl.setAttribute('id', 'scoresList');
+    var highscores = JSON.parse(localStorage.getItem('highscore'));
+    if (highscores !== null) {
+        for (var i = 0; i < highscores.length; i++) {
+            listItem = document.createElement("li");
+            listItem.textContent = highscores[i].name + " " + highscores[i].score
+            listEl.appendChild(listItem);
+            console.log(highscores[i]);
+        }
     }
+    mainSection.insertBefore(listEl, options);
+    clearHighScoresButton = document.createElement("button");
+    clearHighScoresButton.textContent = "Clear High Scores";
+    clearHighScoresButton.setAttribute('onclick', 'clearHighScores()')
+    GoBackButton = document.createElement("button");
+    GoBackButton.textContent = "Go Back";
+    GoBackButton.setAttribute('onclick', 'location.reload()')
+    options.appendChild(GoBackButton);
+    options.appendChild(clearHighScoresButton);
+}
+
+function startQuestions(){
+    questionCount = 0
+    options.removeChild(startButton);
+    timeLeft = 75;
+    timeInterval = setInterval(timer, 1000)
+    var storedScores = JSON.parse(localStorage.getItem("highscore"));
+    if (storedScores !== null) {
+        scores = storedScores;
+    }
+    displayQuestion();
+}
+
+function clearChildren(Element) {
+    while (Element.childElementCount) {
+        Element.removeChild(Element.children[0]);
+        console.log(Element.childElementCount)
+    }
+    console.log('out of children')
 }
 
 
@@ -108,7 +144,7 @@ function evaluateAnswer(element){
         score = score - 10
     }
     questionCount++
-    clearButtons()
+    clearChildren(options)
     if (questionCount === 5){
         displayResults()
     } else {
@@ -121,19 +157,22 @@ function timer () {
     timeLeft--;
     timerSpan.textContent ="Time: " + timeLeft;
     if(timeLeft === 0) {
-      clearButtons()
+      clearChildren(options)
       displayResults();
     }
 }
 
-startButton.addEventListener("click", function() {
-    questionCount = 0
-    options.removeChild(startButton);
-    timeLeft = 75;
-    timeInterval = setInterval(timer, 1000)
-    var storedScores = JSON.parse(localStorage.getItem("highscore"));
-    if (storedScores !== null) {
-        scores = storedScores;
-    }
-    displayQuestion();
-});
+function addToHighscore(){
+    input = document.querySelector('#initials')
+    scores.push({name: input.value, score: score});
+    localStorage.setItem('highscore', JSON.stringify(scores));
+    displayHighscores()
+}
+
+function clearHighScores(){
+    listEl = document.querySelector('#scoresList');
+    clearChildren(listEl);
+    localStorage.removeItem('highscore');
+}
+
+startButton.addEventListener("click", startQuestions);
