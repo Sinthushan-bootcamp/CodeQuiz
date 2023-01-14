@@ -43,36 +43,45 @@ title = document.querySelector('#mainHeader');
 questionSection = document.querySelector('#info');
 options = document.querySelector('#buttonSection');
 timerSpan = document.querySelector('#timer');
-mainSection = document.querySelector('main');
 headSection = document.querySelector('header');
+
 // initialize variables
 var questionCount;
 var timeLeft;
 var timeInterval;
 var score = 0;
 var scores = []
-
+var storedScores
 // these functions work as the view functions, they add and remove elements necessary for their specific page
 function displayQuestion() {
+   // This function displays the questions using the data in the current question object
+
+   //gets current question object and displays data based on key values
    question =  questions[questionCount]
    title.textContent = question.title
    questionSection.textContent = question.question
+   // for each multiple choise option we want to create a button
    for (var i = 0; i < question.choices.length; i++) {
         choice = question.choices[i]
         buttonEl = document.createElement("button");
         buttonEl.textContent = choice
         buttonEl.setAttribute('class', 'btn-option ' + i);
-        buttonEl.setAttribute('onclick','evaluateAnswer(this);')
+        buttonEl.setAttribute('onclick','evaluateAnswer(this);') // once a button is clicked a function to check the answer will be called
         options.appendChild(buttonEl)
         
    }
 }
 
 function displayResults(){
-    score = score + timeLeft
-    clearInterval(timeInterval)
+    // this function displays the results page consisting of a confirmation of completion, the score 
+    //and the option to add the score to the highscore list
+    
+    // set score equal to the time left
+    score = timeLeft
+    clearInterval(timeInterval) // stops the timer
     title.textContent = "All Done!"
     questionSection.textContent = 'your score was ' + score
+    // creating input elements to allow user to add score to the highscore list
     inputEl = document.createElement("input");
     labelEl = document.createElement("label");
     submitEl = document.createElement("button");
@@ -89,27 +98,34 @@ function displayResults(){
 }
 
 function displayHighscores(){
-    clearChildren(options);
-    headSection.removeChild(questionSection);
+    // this function displays the high scores page
+    // the page allows the user to go back to the start page and to clear the high scores
+    clearChildren(options); // clears all the objects in the options section
+    // depending on whether we arrive from the question section or we click the view highscore link
+    // we may need to remove any exiting questions before displaying the highscores
+    if (questionSection.parentNode){ // 
+        headSection.removeChild(questionSection);
+    }
     title.textContent = "Highscores"
     listEl = document.createElement("ol");
     listEl.setAttribute('id', 'scoresList');
-    var highscores = JSON.parse(localStorage.getItem('highscore'));
-    if (highscores !== null) {
-        for (var i = 0; i < highscores.length; i++) {
+    if (scores !== null) { //making sure the the list is not empty
+        for (var i = 0; i < scores.length; i++) { // for each score we will create a list item with the name and the score
             listItem = document.createElement("li");
-            listItem.textContent = highscores[i].name + " " + highscores[i].score
+            listItem.textContent = scores[i].name + " " + scores[i].score
             listEl.appendChild(listItem);
-            console.log(highscores[i]);
         }
     }
-    mainSection.insertBefore(listEl, options);
+    options.appendChild(listEl); //append the ordered list with the list items to the body section
+    // creating the clear high scores button which will trigger the clearHighScores function when clicked
     clearHighScoresButton = document.createElement("button");
     clearHighScoresButton.textContent = "Clear High Scores";
     clearHighScoresButton.setAttribute('onclick', 'clearHighScores()')
+    // creating the go back button
     GoBackButton = document.createElement("button");
     GoBackButton.textContent = "Go Back";
-    GoBackButton.setAttribute('onclick', 'location.reload()')
+    //we utilize the location.reload to trigger a refresh event taking the user back to the starting location page
+    GoBackButton.setAttribute('onclick', 'location.reload()') 
     options.appendChild(GoBackButton);
     options.appendChild(clearHighScoresButton);
 }
@@ -117,37 +133,52 @@ function displayHighscores(){
 
 // utility functions
 function startQuestions(){
-    questionCount = 0
-    var storedScores = JSON.parse(localStorage.getItem("highscore"));
+    // This function is triggere when the start button is clicked
+    // the function will start the timer and display the first question
+    questionCount = 0 //initiate question index to the index of the first question
+    var storedScores = JSON.parse(localStorage.getItem("highscore")); //get all stored scores from the localStorage
     if (storedScores !== null) {
-        scores = storedScores;
+        scores = storedScores; //put the historical scores into the scores array
     }
-    options.removeChild(startButton);
-    timeLeft = 75;
-    timeInterval = setInterval(timer, 1000)
+    options.removeChild(startButton); //get rid of the start button
+    timeLeft = 75; // initiate the timer to 75 seconds
+    // every 1 second the timer function will be called
+    // the last 1 corresponds to the increment parameter of the timer function
+    // we will decrement the time by one
+    timeInterval = setInterval(timer, 1000, 1) 
     displayQuestion();
 }
 
 function clearChildren(Element) {
+    // utility function to clear all children of a given element
+    // as the first child of a given element is removed,the index of the next child will become 0
+    // this will keep running until the number of children is 0
     while (Element.childElementCount) {
         Element.removeChild(Element.children[0]);
-        console.log(Element.childElementCount)
     }
-    console.log('out of children')
 }
 
 
 function evaluateAnswer(element){
+    // this function gets the current question object and 
+    // evaluates whether the answer matches the answer in the question object
+    // the function gets the element as a parameter and looks at the text content to determine the users answer
     question =  questions[questionCount]
+    revealSection = document.querySelector('#reveal')
     if (element.textContent == question.correctAnswer){
-        console.log('Correct Answer')
+        revealSection.textContent = 'Correct Answer'
+        setTimeout(clearReveal, 500); // will clear the evaluation using the clearReveal function after half a second
     } else {
-        console.log('Incorrect Answer')
-        score = score - 10
+        revealSection.textContent = 'Incorrect Answer'
+        setTimeout(clearReveal, 500); // will clear the evaluation using the clearReveal function after half a second
+        timer(10) // when an answer is wrong we call the timer function and set the decrement parameter to 10
     }
-    questionCount++
-    clearChildren(options)
-    if (questionCount === 5){
+    questionCount++ // increment the counter so that when we call displayQuestion it will go to the next question
+    clearChildren(options) // clear the options for the current question
+    // check if we reached the end of the questions if so display the results
+    // otherwise display the next question
+    if (questionCount === questions.length){ 
+        clearReveal()
         displayResults()
     } else {
         displayQuestion()
@@ -155,16 +186,26 @@ function evaluateAnswer(element){
     
 }
 
-function timer () {
-    timeLeft--;
+function clearReveal(){
+    // clears the evaluation "correct answer" or "incorrect answer"
+    revealSection.textContent = ''
+}
+
+function timer(decrement) {
+    // for a given decrement amount this function will decrease the time left and display it back
+    timeLeft -= decrement;
     timerSpan.textContent ="Time: " + timeLeft;
-    if(timeLeft === 0) {
+    if(timeLeft === 0) { // if the timer runs out of time go to the results
       clearChildren(options)
       displayResults();
     }
 }
 
 function addToHighscore(){
+    // this function is triggered when the user clicks on submit button on the results page
+    // the function will take the input from the initials field and the users score
+    // an object will be created with this information and added to the scores array
+    // the highscore key in the local storage will be updated with the new scores
     input = document.querySelector('#initials')
     scores.push({name: input.value, score: score});
     localStorage.setItem('highscore', JSON.stringify(scores));
@@ -172,10 +213,15 @@ function addToHighscore(){
 }
 
 function clearHighScores(){
+    // this function is triggered when the user clicks on clear high scores button on the highscores page
+    // the function first gets ordered list item and clears the children using our clearChildren function
+    // The function will the clear the local storage of the highscores
+    // finally the function set the scores array to an empty array
     listEl = document.querySelector('#scoresList');
     clearChildren(listEl);
     localStorage.removeItem('highscore');
+    scores = []
 }
 
 // Event listeners
-startButton.addEventListener("click", startQuestions);
+startButton.addEventListener("click", startQuestions); // when the start button is clicked the first question will be displayed

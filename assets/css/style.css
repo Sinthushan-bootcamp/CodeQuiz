@@ -82,7 +82,7 @@ ol {
 
 li {
     background-color:var(--secondary-color);
-    margin: 0.5rem;
+    margin: 1rem;
 }
 
 @media screen and (max-width: 970px) {
