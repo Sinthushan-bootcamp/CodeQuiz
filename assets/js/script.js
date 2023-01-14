@@ -44,7 +44,7 @@ questionSection = document.querySelector('#info');
 options = document.querySelector('#buttonSection');
 timerSpan = document.querySelector('#timer');
 headSection = document.querySelector('header');
-
+body = document.querySelector('body')
 // initialize variables
 var questionCount;
 var timeLeft;
@@ -132,14 +132,19 @@ function displayHighscores(){
 
 
 // utility functions
-function startQuestions(){
-    // This function is triggere when the start button is clicked
-    // the function will start the timer and display the first question
-    questionCount = 0 //initiate question index to the index of the first question
+function init(){
+    // this function is called when the window is loaded
+    // this function adds any existing scores from the localstorage and adds it to the scores array
     var storedScores = JSON.parse(localStorage.getItem("highscore")); //get all stored scores from the localStorage
     if (storedScores !== null) {
         scores = storedScores; //put the historical scores into the scores array
     }
+}
+
+function startQuestions(){
+    // This function is triggere when the start button is clicked
+    // the function will start the timer and display the first question
+    questionCount = 0 //initiate question index to the index of the first question
     options.removeChild(startButton); //get rid of the start button
     timeLeft = 75; // initiate the timer to 75 seconds
     // every 1 second the timer function will be called
@@ -225,3 +230,4 @@ function clearHighScores(){
 
 // Event listeners
 startButton.addEventListener("click", startQuestions); // when the start button is clicked the first question will be displayed
+window.addEventListener("load", init); // call the init function once window is loaded
